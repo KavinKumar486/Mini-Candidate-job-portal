@@ -1,0 +1,124 @@
+Mini Candidate Job Portal — status
+Updated: 13 Nov 2026
+
+Local app (as of this update)
+- API:        http://localhost:4000/api/health  (running if you started npm run dev)
+- Client:     http://localhost:5173
+- MySQL:      Docker on localhost:3307 (jobs_portal + jobs_portal_test)
+- Tests:      6 suites / 42 tests passing (cd server && npm test)
+- Demo login: candidate@demo.com / Demo1234  (after npm run seed:demo)
+
+
+DONE
+----
+Checkpoint 0 — Repo, rules, spec
+  [x] Monorepo: /server, /client, /docs
+  [x] AGENTS.md, CLAUDE.md, .cursor/rules
+  [x] docs/SPEC.md
+  [x] Scaffold: Express app.js vs server.js, Zod env, helmet/cors, health, Vite+React+Tailwind+Router+Query
+  [x] Root README, .gitignore, .env.example (server + client), npm scripts
+  [ ] GitHub repo (not initialized; no .git yet)
+
+Checkpoint 1 — Data model
+  [x] Prisma MySQL schema: User, CandidateProfile, Job, Application, ApplicationStatusHistory
+  [x] Unique email; unique (userId, jobId); job indexes
+  [x] Initial migration
+  [x] Idempotent seed: 40 jobs + demo candidate
+  [x] Search fallback: Prisma contains / LIKE (FULLTEXT skipped on purpose)
+
+Checkpoint 2 — Auth
+  [x] POST /api/auth/register, POST /api/auth/login, GET /api/auth/me
+  [x] JWT + bcrypt, rate limit on register/login
+  [x] Tests: register, duplicate 409, weak password 422, login, user enumeration, /me 401/200, expired token
+
+Checkpoint 3 — Profile
+  [x] GET/PATCH /api/profile, POST/GET /api/profile/resume
+  [x] Zod whitelist, Indian/E.164 phone, skills dedupe, completeness 0–100
+  [x] Multer: pdf/doc/docx, 5 MB, UUID filenames
+  [x] Tests: update, invalid phone, oversize 413, wrong type, unauth, resume ownership
+
+Checkpoint 4 — Jobs
+  [x] GET /api/jobs (optional auth + hasApplied), GET /api/jobs/:id
+  [x] Filters: q, location, jobType, workMode, experienceLevel, salaryMin, skills, postedWithin, sort, page, pageSize
+  [x] buildJobWhere + tests (including SQL-looking q is harmless)
+
+Checkpoint 5 — Applications
+  [x] Apply, list mine, detail + timeline, withdraw
+  [x] Demo admin: PATCH /api/admin/applications/:id/status (X-Admin-Key)
+  [x] Unique constraint + P2002; state machine; history in a transaction
+  [x] Tests: apply, duplicate, concurrent duplicate, closed job, incomplete profile, filter, timeline, transitions, withdraw, cross-user 404
+
+Checkpoint 6 — Frontend
+  [x] /register, /login, /jobs (URL-synced filters, debounce, pagination, mobile drawer)
+  [x] /jobs/:id apply modal
+  [x] /profile form, resume upload, completeness bar, unsaved warning
+  [x] /applications and /applications/:id timeline + withdraw confirm
+  [x] AuthContext, protected routes, toasts, loading/empty/error
+  [x] Client production build succeeds
+  [ ] Full click-through in a real browser (API smoke-tested; UI not walked end-to-end here)
+
+Checkpoint 8 — Deploy config (code only)
+  [x] Dockerfile (migrate on start), docker-compose.yml, render.yaml, client/vercel.json
+  [x] Storage abstraction (local disk); ephemeral-disk note in README
+  [x] seed:demo (demo user + 3 applications in different statuses)
+  [ ] Live frontend URL
+  [ ] Live API /health URL
+  [ ] CORS locked to the real Vercel origin in production env
+
+Checkpoint 9 — Docs
+  [x] README.md (setup, env, tests, API table, demo credentials, limitations)
+  [x] docs/AI_DEVELOPMENT.md
+  [ ] Fill live links in README after deploy
+  [ ] AI log table in job_portal_checkpoints.md still empty
+
+
+YET TO DO
+---------
+Checkpoint 7 — Cross-tool review (not run as separate Gemini/ChatGPT passes)
+  [ ] Paste git diff into ChatGPT/Codex for logic review (prompt 7.2)
+  [ ] Security audit in Gemini (OWASP table, prompt 7.1)
+  [ ] Apply valid findings with failing test → fix → passing test (prompt 7.3)
+  [ ] Jest coverage report; add tests for branches under 80% (prompt 7.5)
+  [ ] UX/a11y pass on pages (prompt 7.6)
+  [ ] Manual abuse checks from the plan:
+        log in as A, fetch B’s application id → 404
+        tampered/expired JWT → 401
+        .exe renamed to .pdf → rejected
+        two simultaneous applies → one 201, one 409  (covered by API test)
+        q=' OR 1=1 -- → harmless  (covered by API test)
+        HIRED → SUBMITTED → 409
+        mobile viewport walk-through
+
+Checkpoint 8 — Actual hosting
+  [ ] Create GitHub repo and push
+  [ ] Deploy API (Render/Railway) + managed MySQL
+  [ ] Run migrate + seed + seed:demo on hosted DB
+  [ ] Deploy client to Vercel (VITE_API_URL, SPA rewrites)
+  [ ] Confirm full flow in an incognito window on the live URL
+  [ ] Put live URLs into README
+
+Checkpoint 0 leftover / git
+  [ ] git init
+  [ ] Checkpoint-wise commits (assignment wants a tidy commit trail)
+  [ ] Push to GitHub
+  [ ] Do not commit .env or uploads (already in .gitignore)
+
+Submission leftovers
+  [ ] Live demo URL + API health URL
+  [ ] GitHub repo with checkpoint-wise history
+  [ ] 2–3 prompt examples with outcomes in the submission message
+  [ ] Confirm .env.example is committed and no secrets are in git
+  [ ] Optional: Playwright/Vitest UI tests (plan said optional; cut if short on time)
+
+Nice-to-haves (explicitly out of scope or cut-ok)
+  [ ] MySQL FULLTEXT instead of LIKE
+  [ ] S3/Cloudinary for resumes (needed if you care about files surviving Render restarts)
+  [ ] Recruiter portal, email, OAuth, saved jobs, alerts, resume parsing
+
+
+NEXT ACTIONS (suggested order)
+1. git init + first commits (do not commit .env).
+2. Manual UI walk-through: register → profile/resume → search → apply → admin status change → timeline.
+3. Checkpoint 7 reviews + any extra tests.
+4. Deploy API + Vercel; paste URLs into README.
+5. Write the 2–3 prompt examples for the submission.
