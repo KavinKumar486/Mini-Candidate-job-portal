@@ -1,0 +1,6 @@
+---
+description: Mini Candidate Job Portal conventions
+alwaysApply: true
+---
+
+Follow AGENTS.md. Stack: Express ESM + Prisma/MySQL + React Vite. Thin routes, Zod on every input, `{ error: { code, message, details } }`, no secrets in code, candidates only see their own data (404 otherwise).
