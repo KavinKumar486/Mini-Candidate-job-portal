@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CANDIDATE
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+}
+
+enum WorkMode {
+  ONSITE
+  REMOTE
+  HYBRID
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  SHORTLISTED
+  INTERVIEW
+  OFFERED
+  HIRED
+  REJECTED
+  WITHDRAWN
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(CANDIDATE)
+  createdAt    DateTime @default(now())
+
+  profile      CandidateProfile?
+  applications Application[]
+}
+
+model CandidateProfile {
+  id              String  @id @default(uuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName        String?
+  phone           String?
+  location        String?
+  headline        String?
+  summary         String? @db.Text
+  skills          Json?
+  experienceYears Int?
+  currentTitle    String?
+  resumePath      String?
+  linkedinUrl     String?
+  githubUrl       String?
+}
+
+model Job {
+  id              String    @id @default(uuid())
+  title           String
+  company         String
+  location        String
+  jobType         JobType
+  workMode        WorkMode
+  experienceLevel String
+  salaryMin       Int?
+  salaryMax       Int?
+  skills          Json
+  description     String    @db.Text
+  status          JobStatus @default(OPEN)
+  postedAt        DateTime  @default(now())
+
+  applications Application[]
+
+  @@index([title])
+  @@index([location])
+  @@index([jobType])
+  @@index([workMode])
+  @@index([status])
+  @@index([postedAt])
+  @@index([status, postedAt])
+}
+
+model Application {
+  id         String            @id @default(uuid())
+  userId     String
+  jobId      String
+  coverNote  String?           @db.Text
+  resumePath String
+  status     ApplicationStatus @default(SUBMITTED)
+  appliedAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  user    User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job     Job                        @relation(fields: [jobId], references: [id], onDelete: Restrict)
+  history ApplicationStatusHistory[]
+
+  @@unique([userId, jobId])
+  @@index([userId])
+  @@index([status])
+}
+
+model ApplicationStatusHistory {
+  id            String             @id @default(uuid())
+  applicationId String
+  fromStatus    ApplicationStatus?
+  toStatus      ApplicationStatus
+  note          String?
+  changedAt     DateTime           @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId, changedAt])
+}
