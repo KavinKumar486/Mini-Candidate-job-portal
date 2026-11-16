@@ -1,5 +1,7 @@
 # Mini Candidate Job Portal
 
+**Start here:** [docs/START.md](docs/START.md) — local run (`.\scripts\dev.ps1`), easy deploy (Railway + Vercel), how to record the AI workflow.
+
 Candidate-facing job portal for a Jobs Territory assignment: register/login/profile, searchable listings, applications, and a status timeline. Recruiter updates are simulated with an admin API key (in production that would be the existing ATS).
 
 ## Features
@@ -38,6 +40,8 @@ erDiagram
 | Tests | Jest + Supertest |
 
 ## Local setup (Docker MySQL)
+
+**Windows (one command):** `.\scripts\dev.ps1`
 
 ```bash
 docker compose up mysql -d
@@ -103,8 +107,10 @@ Admin (local): `X-Admin-Key: change-me-admin-key` from `server/.env.example` (ov
 
 ## Deploy
 
-- **API:** Render/Railway using `server/Dockerfile` + managed MySQL. Run `prisma migrate deploy` (already in the Docker CMD). Set `CORS_ORIGIN` to the Vercel origin.  
-- **Client:** Vercel — `client` as root, `VITE_API_URL` = public API URL, SPA rewrites in `client/vercel.json`.  
+Click-by-click: [docs/START.md](docs/START.md#2-easy-deploy-about-20-minutes).
+
+- **API + MySQL:** Railway (GitHub repo, root `server`, Dockerfile, then seed in the shell).
+- **Client:** Vercel, root directory `client`, `VITE_API_URL` = public API URL. Then set API `CORS_ORIGIN` to the Vercel origin.
 - Live URLs: add here once deployed.
 
 ## Known limitations

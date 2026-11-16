@@ -358,9 +358,9 @@ Generate README.md by reading the actual repo: overview, features, architecture 
 
 | # | Checkpoint | Tool | Prompt (short) | What it got right | What I fixed/overrode and why |
 |---|---|---|---|---|---|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
+| 1 | 5 | Cursor (builder) | Applications + state machine + concurrent duplicate test | Unique (user, job), P2002, history in a transaction, 404 for other users | Left admin status behind `X-Admin-Key` (no fake recruiter UI) |
+| 2 | 1 / debug | Cursor | Seed + tests against MySQL | 40-job seed, migrations | Seed wrote to the test DB when `DATABASE_URL` was leftover in the shell; fixed by loading `.env` in `prisma/seed.js` |
+| 3 | 6 | Cursor | Jobs UI with URL-synced filters | Debounce, shareable query string, apply modal | Pagination `setField` always reset `page=1`; Next did nothing — skip reset when the key *is* `page`. Resume download uses fetch + JWT, not a bare `<a href>` |
 
 **Best 3 to submit:**
 - **5.1** (business rules + state machine + concurrency): shows constraints and precise requirements

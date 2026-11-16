@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, apiUrl } from '../api/client.js';
 import { Button } from '../components/ui/Button.jsx';
@@ -32,9 +32,14 @@ export function Profile() {
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadPct, setUploadPct] = useState(null);
+  const formInitialised = useRef(false);
 
   useEffect(() => {
     if (!data?.profile) return;
+    // Only populate the form on the first load. Subsequent invalidations
+    // (e.g. after a resume upload) must not wipe unsaved field values.
+    if (formInitialised.current) return;
+    formInitialised.current = true;
     const p = data.profile;
     setForm({
       fullName: p.fullName || '',
@@ -104,6 +109,7 @@ export function Profile() {
       });
       setDirty(false);
       toast.push('Profile saved');
+      formInitialised.current = false; // allow the re-fetch to sync the form
       qc.invalidateQueries({ queryKey: ['profile'] });
     } catch (err) {
       toast.push(err.message, 'error');

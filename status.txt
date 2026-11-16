@@ -1,12 +1,17 @@
 Mini Candidate Job Portal — status
-Updated: 13 Nov 2026
-
-Local app (as of this update)
+Updated: 14 Nov 2026 (evening)
+  
+Local app
 - API:        http://localhost:4000/api/health  (running if you started npm run dev)
 - Client:     http://localhost:5173
 - MySQL:      Docker on localhost:3307 (jobs_portal + jobs_portal_test)
 - Tests:      6 suites / 42 tests passing (cd server && npm test)
 - Demo login: candidate@demo.com / Demo1234  (after npm run seed:demo)
+
+GitHub
+- Repo:  https://github.com/KavinKumar486/Mini-Candidate-job-portal
+- Branch: main @ 9b94f95 (matches remote)
+- .env / uploads / login.json not committed
 
 
 DONE
@@ -17,7 +22,8 @@ Checkpoint 0 — Repo, rules, spec
   [x] docs/SPEC.md
   [x] Scaffold: Express app.js vs server.js, Zod env, helmet/cors, health, Vite+React+Tailwind+Router+Query
   [x] Root README, .gitignore, .env.example (server + client), npm scripts
-  [ ] GitHub repo (not initialized; no .git yet)
+  [x] git init
+  [x] GitHub remote + push: https://github.com/KavinKumar486/Mini-Candidate-job-portal
 
 Checkpoint 1 — Data model
   [x] Prisma MySQL schema: User, CandidateProfile, Job, Application, ApplicationStatusHistory
@@ -71,43 +77,32 @@ Checkpoint 9 — Docs
   [ ] Fill live links in README after deploy
   [ ] AI log table in job_portal_checkpoints.md still empty
 
+Git trail (each commit pushed separately to origin/main)
+  [x] 25b18ed  checkpoint 0: add project conventions, spec, and monorepo scaffold
+  [x] 1dd8286  checkpoint 1: add MySQL schema, migration, and idempotent job seed
+  [x] 04703bb  checkpoint 2: add JWT auth for register, login, and /me
+  [x] 825294a  checkpoint 3: add candidate profile updates and safe resume upload
+  [x] 0b37a41  checkpoint 4: add public job search, filters, and pagination
+  [x] 20606af  checkpoint 5: add applications, status machine, and demo ATS updates
+  [x] 18c46ef  checkpoint 6: add candidate UI for auth, jobs, profile, and tracking
+  [x] 2081013  checkpoint 8: add Docker, deploy config, and demo seed for hosting
+  [x] 9b94f95  checkpoint 9: document setup, architecture, and AI-assisted workflow
+
 
 YET TO DO
 ---------
-Checkpoint 7 — Cross-tool review (not run as separate Gemini/ChatGPT passes)
-  [ ] Paste git diff into ChatGPT/Codex for logic review (prompt 7.2)
-  [ ] Security audit in Gemini (OWASP table, prompt 7.1)
-  [ ] Apply valid findings with failing test → fix → passing test (prompt 7.3)
-  [ ] Jest coverage report; add tests for branches under 80% (prompt 7.5)
-  [ ] UX/a11y pass on pages (prompt 7.6)
-  [ ] Manual abuse checks from the plan:
-        log in as A, fetch B’s application id → 404
-        tampered/expired JWT → 401
-        .exe renamed to .pdf → rejected
-        two simultaneous applies → one 201, one 409  (covered by API test)
-        q=' OR 1=1 -- → harmless  (covered by API test)
-        HIRED → SUBMITTED → 409
-        mobile viewport walk-through
-
-Checkpoint 8 — Actual hosting
-  [ ] Create GitHub repo and push
+Checkpoint 7 Actual hosting
   [ ] Deploy API (Render/Railway) + managed MySQL
   [ ] Run migrate + seed + seed:demo on hosted DB
   [ ] Deploy client to Vercel (VITE_API_URL, SPA rewrites)
   [ ] Confirm full flow in an incognito window on the live URL
   [ ] Put live URLs into README
 
-Checkpoint 0 leftover / git
-  [ ] git init
-  [ ] Checkpoint-wise commits (assignment wants a tidy commit trail)
-  [ ] Push to GitHub
-  [ ] Do not commit .env or uploads (already in .gitignore)
-
 Submission leftovers
   [ ] Live demo URL + API health URL
-  [ ] GitHub repo with checkpoint-wise history
+  [x] GitHub repo with checkpoint-wise history
   [ ] 2–3 prompt examples with outcomes in the submission message
-  [ ] Confirm .env.example is committed and no secrets are in git
+  [x] .env.example committed; no secrets in git
   [ ] Optional: Playwright/Vitest UI tests (plan said optional; cut if short on time)
 
 Nice-to-haves (explicitly out of scope or cut-ok)
@@ -117,8 +112,9 @@ Nice-to-haves (explicitly out of scope or cut-ok)
 
 
 NEXT ACTIONS (suggested order)
-1. git init + first commits (do not commit .env).
-2. Manual UI walk-through: register → profile/resume → search → apply → admin status change → timeline.
-3. Checkpoint 7 reviews + any extra tests.
-4. Deploy API + Vercel; paste URLs into README.
-5. Write the 2–3 prompt examples for the submission.
+See docs/START.md.
+1. Local: .\scripts\dev.ps1 then walk the UI.
+2. Record a 3–5 min demo (Win+G) + keep the AI log (already started in job_portal_checkpoints.md).
+3. Paste a git diff into ChatGPT + Gemini (checkpoint 7 prompts).
+4. Deploy Railway (API+MySQL) then Vercel (client); paste URLs into README.
+5. Commit docs/START.md, scripts/dev.ps1, and this status update; push.
